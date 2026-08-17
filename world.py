@@ -3,6 +3,7 @@ from vector2 import Vector2
 
 class World:
     GRAVITY = Vector2(0, 500)
+    SOLVER_ITERATIONS = 4
 
     def __init__(self, floor_y, ceiling_y, left_wall_x, right_wall_x):
         self.bodies = []
@@ -26,9 +27,10 @@ class World:
             self.resolve_left_wall_collision(body)
             self.resolve_right_wall_collision(body)
 
-        for i in range(len(self.bodies)):
-            for j in range(i + 1, len(self.bodies)):
-                self.resolve_ball_collision(self.bodies[i], self.bodies[j])
+        for n in range(self.SOLVER_ITERATIONS):
+            for i in range(len(self.bodies)):
+                for j in range(i + 1, len(self.bodies)):
+                    self.resolve_ball_collision(self.bodies[i], self.bodies[j])
 
 
     def resolve_floor_collision(self, body):
