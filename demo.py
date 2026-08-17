@@ -9,6 +9,7 @@ balls = []
 WIDTH, HEIGHT = 1500, 800
 
 pygame.init()
+font = pygame.font.SysFont(None, 24)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
@@ -37,6 +38,10 @@ while running:
             (int(ball.position.x), int(ball.position.y)),
             int(ball.radius)
         )
+
+    fps = int(clock.get_fps())
+    fps_text = font.render(f"FPS: {fps}", True, (255, 255, 255))
+    screen.blit(fps_text, (10, 10))
 
     pygame.display.flip()
 

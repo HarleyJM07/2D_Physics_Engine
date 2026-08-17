@@ -31,11 +31,10 @@ class World:
     def resolve_ball_collisions_grid(self):
         grid = self.build_grid()
 
-        #debug print
-
-        for cell, bodies_in_cell in grid.items():
-            if len(bodies_in_cell) > 1:
-                print(f"Cell {cell} has {len(bodies_in_cell)} balls")
+        # debug print
+        # for cell, bodies_in_cell in grid.items():
+        #     if len(bodies_in_cell) > 1:
+        #         print(f"Cell {cell} has {len(bodies_in_cell)} balls")
 
         checked_pairs = set()
 
