@@ -86,7 +86,7 @@ class World:
             if velocity_along_normal > 0:
                 return
 
-            restitution = 2.0
+            restitution = 0.7
 
             impulse_magnitude = -(1 + restitution) * velocity_along_normal
             impulse_magnitude /= (1 / a.mass) + (1 / b.mass)
