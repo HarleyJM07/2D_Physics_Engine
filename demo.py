@@ -14,8 +14,8 @@ clock = pygame.time.Clock()
 
 world = World(floor_y=HEIGHT, ceiling_y=0, left_wall_x=0, right_wall_x=WIDTH)
 
-for i in range(50):
-    ball = RigidBody(position=Vector2(WIDTH / 2 - random.randint(10, 200), random.randint(100, 300)), mass=1.0, radius=25)
+for i in range(20):
+    ball = RigidBody(position=Vector2(random.randint(25, WIDTH - 25), random.randint(100, 300)), mass=1.0, radius=25)
     balls.append(ball)
     world.add_body(ball)
 

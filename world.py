@@ -4,6 +4,7 @@ from vector2 import Vector2
 class World:
     GRAVITY = Vector2(0, 500)
     SOLVER_ITERATIONS = 4
+    CELL_SIZE = 60
 
     def __init__(self, floor_y, ceiling_y, left_wall_x, right_wall_x):
         self.bodies = []
@@ -11,6 +12,57 @@ class World:
         self.left_wall_x = left_wall_x
         self.right_wall_x = right_wall_x
         self.ceiling_y = ceiling_y
+
+    def build_grid(self):
+        grid = {}
+
+        for body in self.bodies:
+            cell_x = int(body.position.x // self.CELL_SIZE)
+            cell_y = int(body.position.y // self.CELL_SIZE)
+            cell = (cell_x, cell_y)
+
+            if cell not in grid:
+                grid[cell] = []
+            
+            grid[cell].append(body)
+
+        return grid
+
+    def resolve_ball_collisions_grid(self):
+        grid = self.build_grid()
+
+        #debug print
+
+        for cell, bodies_in_cell in grid.items():
+            if len(bodies_in_cell) > 1:
+                print(f"Cell {cell} has {len(bodies_in_cell)} balls")
+
+        checked_pairs = set()
+
+        for body in self.bodies:
+            cell_x = int(body.position.x // self.CELL_SIZE)
+            cell_y = int(body.position.y // self.CELL_SIZE)
+
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    neighbour_cell = (cell_x + dx, cell_y + dy)
+
+                    if neighbour_cell not in grid:
+                        continue
+
+                    for other in grid[neighbour_cell]:
+                        if other is body:
+                            continue
+                        
+                        pair = (id(body), id(other))
+                        pair_sorted = tuple(sorted(pair))
+
+                        if pair_sorted in checked_pairs:
+                            continue
+                        
+                        checked_pairs.add(pair_sorted)
+
+                        self.resolve_ball_collision(body, other)
 
     def add_body(self, body):
         self.bodies.append(body)
@@ -27,10 +79,8 @@ class World:
             self.resolve_left_wall_collision(body)
             self.resolve_right_wall_collision(body)
 
-        for n in range(self.SOLVER_ITERATIONS):
-            for i in range(len(self.bodies)):
-                for j in range(i + 1, len(self.bodies)):
-                    self.resolve_ball_collision(self.bodies[i], self.bodies[j])
+        for i in range(self.SOLVER_ITERATIONS):
+            self.resolve_ball_collisions_grid()
 
 
     def resolve_floor_collision(self, body):
