@@ -5,6 +5,7 @@ from rigid_body import RigidBody
 from world import World
 
 dragged_ball = None
+previous_mouse_position = Vector2(0, 0)
 
 balls = []
 
@@ -33,13 +34,21 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = event.pos
             click_position = Vector2(mouse_x, mouse_y)
+            hit_a_ball = False
 
             for ball in balls:
                 direction = click_position - ball.position
                 distance_squared = direction.length_squared()
 
                 if distance_squared < ball.radius ** 2:
+                    hit_a_ball = True
                     dragged_ball = ball
+                    previous_mouse_position = click_position
+        
+            if not hit_a_ball:
+                ball = RigidBody(position=Vector2(mouse_x, mouse_y), mass=1.0, radius=25)
+                balls.append(ball)
+                world.add_body(ball)
     
         if event.type == pygame.MOUSEBUTTONUP:
             dragged_ball = None
@@ -48,7 +57,14 @@ while running:
 
     if dragged_ball is not None:
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        dragged_ball.position = Vector2(mouse_x, mouse_y)
+        current_mouse_position = Vector2(mouse_x, mouse_y)
+
+        mouse_velocity = (current_mouse_position - previous_mouse_position) / dt
+
+        dragged_ball.position = current_mouse_position
+        dragged_ball.velocity = mouse_velocity
+
+        previous_mouse_position = current_mouse_position
 
     screen.fill((30, 30, 30))
 
